@@ -1,0 +1,37 @@
+extends layout
+
+block content
+    div
+        if index_id > 0
+            - var prev = index_id - 1
+            a(href=prev) <
+            |
+        p #{cur_id}
+        |
+        if index_id < max_index
+            - var next = index_id + 1
+            a(href=next) >
+    div
+        form(action="/" +cur_id+"/save" method='get' onclick=)
+            input(type="radio" name="tb_filter" value="0" )
+            | Active
+            input(type="radio" name="tb_filter" value="1" )
+            | LTBI
+            input(type="radio" name="tb_filter" value="2" checked)
+            | None
+            input(type="radio" name="tb_filter" value="3")
+            | Wrong Study
+    br
+    br
+    h2= "Neighbourhood"
+    each element in neighbourhood_data
+        each line in element.split(/\\n/)
+            = line
+            br
+        br
+    h2= "Charts"
+    //each element in text_data
+        each line in element.split(/\\n/)
+                = line
+                br
+        br
