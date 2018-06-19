@@ -5,21 +5,22 @@ block content
         if index_id > 0
             - var prev = index_id - 1
             a(href=prev) <
-            |
-        p #{cur_id}
         |
-        if index_id < max_index
+        p(id="cur_id") #{cur_id}
+        |
+        if index_id < max_index - 1
             - var next = index_id + 1
             a(href=next) >
+    br
     div
         form(action="/" +cur_id+"/save" method='get' onclick=)
-            input(type="radio" name="tb_filter" value="0" )
-            | Active
-            input(type="radio" name="tb_filter" value="1" )
+            input(type="radio" name="tb_filter" value="Active TB" checked=(tb_status==="Active TB" ? "checked" : undefined))
+            | Active TB
+            input(type="radio" name="tb_filter" value="LTBI" checked=(tb_status==="LTBI" ? "checked" : undefined))
             | LTBI
-            input(type="radio" name="tb_filter" value="2" checked)
+            input(type="radio" name="tb_filter" value="None" checked=(tb_status==="None" ? "checked" : undefined))
             | None
-            input(type="radio" name="tb_filter" value="3")
+            input(type="radio" name="tb_filter" value="Wrong Study" checked=(tb_status==="Wrong Study" ? "checked" : undefined))
             | Wrong Study
     br
     br
@@ -30,7 +31,7 @@ block content
             br
         br
     h2= "Charts"
-    //each element in text_data
+    each element in text_data
         each line in element.split(/\\n/)
                 = line
                 br

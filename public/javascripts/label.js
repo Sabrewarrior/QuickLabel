@@ -1,9 +1,12 @@
 $(document).ready(function () {
     $("input[name='tb_filter']").change(function(){
+        var value = $( this ).val();
+        var cur_id = document.getElementById("cur_id").textContent;
+        console.log(cur_id);
+            //console.log($( this ).val());
         $.ajax({
             type: "GET",
-            url: "/save/"$("input[name='tb_filter']").val(),
-            cache: false,
+            url: "/save/" + cur_id  + "/" + value
         })
-    })
+    });
 });
