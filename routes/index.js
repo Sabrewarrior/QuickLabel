@@ -1,13 +1,48 @@
 // node_modules\nodemon\bin\nodemon
-var express = require('express');
-var router = express.Router();
+const express = require('express');
 const parse = require('csv-parse/lib/sync');
-var fs = require('fs');
-var unique_ids = new Set([]);
-var id_dict = {};
-var tb_status = {};
-var x = parse(fs.readFileSync("C:\\Users\\joshiu\\WebstormProjects\\QuickLabel\\data\\active_tb.csv", "utf-8"), from=2);
-var Lazy = require('lazy');
+const fs = require('fs');
+const Lazy = require('lazy');
+
+let router = express.Router();
+let unique_ids = new Set([]);
+let id_dict = {};
+let labels = {};
+//let x = parse(fs.readFileSync(", "utf-8"), from=2);
+let set_array = [];
+console.time("dbsave");
+new Lazy(fs.createReadStream("C:\\Users\\joshiu\\WebstormProjects\\QuickLabel\\data\\active_tb.csv", "utf-8"))
+    .lines
+    .skip(1)
+    .forEach(function(line){
+        let item = parse(line)[0];
+        unique_ids.add(item[0]);
+        if (id_dict[item[0]] === undefined) {
+            labels[item[0]] = {"tb_status": "None"};
+            id_dict[item[0]] = {"neighbourhood": [item[1]],
+                "text": []
+            }
+        } else {
+            id_dict[item[0]]["neighbourhood"].push(item[1])
+        }}).on("pipe", function(){
+            set_array = Array.from(unique_ids);
+
+            console.log("Started reading data");
+            new Lazy(fs.createReadStream("Z:\\LKS-CHART\\Projects\\NLP POC\\Study data\\TB\\dev\\Data_unlabeled(Clean).csv", "utf-8"))
+                .lines
+                .skip(1)
+                .forEach(function(line){
+                    let item = parse(line)[0];
+                    if (id_dict[item[0]] !== undefined) {
+                        id_dict[item[0]]["text"].push(item[2])
+                    }
+                }).on('pipe', function() {
+                    console.log("Finished reading data");
+                    console.timeEnd("dbsave");
+                    delete(unique_ids);
+                });
+        });
+/*
 x.forEach(function(item){
     unique_ids.add(item[0]);
     if (id_dict[item[0]] === undefined) {
@@ -18,26 +53,29 @@ x.forEach(function(item){
         id_dict[item[0]]["neighbourhood"].push(item[1])
     }
 });
-unique_ids.forEach(function(item){
-   tb_status[item] = "None";
-});
-delete(x);
-console.log("Finished neighbourhood");
 
-new Lazy(fs.createReadStream("Z:\\LKS-CHART\\Projects\\NLP POC\\Study data\\TB\\dev\\Data_unlabeled(Clean).csv", "utf-8"))
-    .lines
-    .skip(1)
-    .forEach(function(line){
-        let item = parse(line)[0];
+delete(x);
+*/
+
+console.log("Finished neighbourhood");
+/*/
+var parser = parse_async({from: 2}, function(err, data){
+    data.forEach(function(item){
         if (id_dict[item[0]] !== undefined) {
             id_dict[item[0]]["text"].push(item[2])
         }
-    }).on('pipe', function() {
-        console.log("Finished Reading")
     });
+});
+var stream = fs.createReadStream("Z:\\LKS-CHART\\Projects\\NLP POC\\Study data\\TB\\dev\\Data_unlabeled(Clean).csv", "utf-8");
+stream.pipe(parser).on('end',function(){
+    console.timeEnd("dbsave");
+    stream.destroy();
+});
+//*/
+
+//*/
 
 
-var set_array = Array.from(unique_ids);
 console.log("READY");
 // console.log(x);
 /* GET home page. */
@@ -47,7 +85,7 @@ router.get('/', function(req, res, next) {
       text_data: id_dict[set_array[0]]["text"],
       index_id: 0, max_index: set_array.length,
       cur_id: set_array[0],
-      tb_status: tb_status[set_array[0]]
+      labels: labels[set_array[0]]["tb_status"]
   });
 });
 
@@ -64,7 +102,7 @@ router.get('/:index_id', function(req, res, next) {
         text_data: id_dict[set_array[Number(req.params["index_id"])]]["text"],
         index_id: Number(req.params["index_id"]), max_index: set_array.length,
         cur_id: set_array[Number(req.params["index_id"])],
-        tb_status: tb_status[set_array[Number(req.params["index_id"])]]
+        tb_status: labels[set_array[Number(req.params["index_id"])]]["tb_status"]
     });
 });
 
