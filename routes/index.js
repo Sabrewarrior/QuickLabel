@@ -3,11 +3,11 @@ var express = require('express');
 var router = express.Router();
 const parse = require('csv-parse/lib/sync');
 var fs = require('fs');
-var neighbourhood = fs.readFileSync("C:\\Users\\joshiu\\WebstormProjects\\QuickLabel\\data\\active_tb.csv", "utf-8");
 var unique_ids = new Set([]);
 var id_dict = {};
 var tb_status = {};
-var x = parse(neighbourhood, from=2);
+var x = parse(fs.readFileSync("C:\\Users\\joshiu\\WebstormProjects\\QuickLabel\\data\\active_tb.csv", "utf-8"), from=2);
+var Lazy = require('lazy');
 x.forEach(function(item){
     unique_ids.add(item[0]);
     if (id_dict[item[0]] === undefined) {
@@ -22,20 +22,21 @@ unique_ids.forEach(function(item){
    tb_status[item] = "None";
 });
 delete(x);
-delete(neighbourhood);
 console.log("Finished neighbourhood");
-/*
-var text = fs.readFileSync("Z:\\LKS-CHART\\Projects\\NLP POC\\Study data\\TB\\dev\\Data_unlabeled(Clean).csv", "utf-8");
-var y = parse(text, from=2);
-y.forEach(function(item){
-    unique_ids.add(item[0]);
-    if (id_dict[item[0]] !== undefined) {
-        id_dict[item[0]]["text"].push(item[2])
+
+new Lazy(fs.createReadStream("Z:\\LKS-CHART\\Projects\\NLP POC\\Study data\\TB\\dev\\Data_unlabeled(Clean).csv", "utf-8"))
+    .lines
+    .skip(1)
+    .forEach(function(line){
+        let item = parse(line)[0];
+        if (id_dict[item[0]] !== undefined) {
+            id_dict[item[0]]["text"].push(item[2])
         }
-});
-delete(text);
-delete(y);
-*/
+    }).on('pipe', function() {
+        console.log("Finished Reading")
+    });
+
+
 var set_array = Array.from(unique_ids);
 console.log("READY");
 // console.log(x);
@@ -50,15 +51,17 @@ router.get('/', function(req, res, next) {
   });
 });
 
-router.post('/:index_id/save', function(req, res, next) {
-
+router.get('/save/:index_id/:value', function(req, res, next) {
+    tb_status[req.params["index_id"]] = req.params["value"];
+    res.sendStatus(200);
 });
+
 
 
 router.get('/:index_id', function(req, res, next) {
     res.render('record', { title: "QuickLabel",
         neighbourhood_data: id_dict[set_array[Number(req.params["index_id"])]]["neighbourhood"],
-        //text_data: id_dict[set_array[Number(req.params["index_id"])]]["text"],
+        text_data: id_dict[set_array[Number(req.params["index_id"])]]["text"],
         index_id: Number(req.params["index_id"]), max_index: set_array.length,
         cur_id: set_array[Number(req.params["index_id"])],
         tb_status: tb_status[set_array[Number(req.params["index_id"])]]
