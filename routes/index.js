@@ -11,7 +11,7 @@ let labels = {};
 //let x = parse(fs.readFileSync(", "utf-8"), from=2);
 let set_array = [];
 console.time("dbsave");
-new Lazy(fs.createReadStream("C:\\Users\\joshiu\\WebstormProjects\\QuickLabel\\data\\active_tb.csv", "utf-8"))
+new Lazy(fs.createReadStream("Y:\\LKS-CHART\\Projects\\NLP POC\\Study data\\TB\\dev\\Unlabeled\\active_tb.csv", "utf-8"))
     .lines
     .skip(1)
     .forEach(function(line){
@@ -28,7 +28,7 @@ new Lazy(fs.createReadStream("C:\\Users\\joshiu\\WebstormProjects\\QuickLabel\\d
             set_array = Array.from(unique_ids);
 
             console.log("Started reading data");
-            new Lazy(fs.createReadStream("Z:\\LKS-CHART\\Projects\\NLP POC\\Study data\\TB\\dev\\Data_unlabeled(Clean).csv", "utf-8"))
+            new Lazy(fs.createReadStream("Y:\\LKS-CHART\\Projects\\NLP POC\\Study data\\TB\\dev\\Data_unlabeled(Clean).csv", "utf-8"))
                 .lines
                 .skip(1)
                 .forEach(function(line){
@@ -89,8 +89,12 @@ router.get('/', function(req, res, next) {
   });
 });
 
-router.get('/save/:index_id/:value', function(req, res, next) {
-    tb_status[req.params["index_id"]] = req.params["value"];
+router.get('/save/:index_id/:label/:value', function(req, res, next) {
+	if (tb_status[req.params["index_id"]][feq.params["label"]] !== undefined) {
+		tb_status[req.params["index_id"]][req.params["label"]] = req.params["value"];
+	} else {
+		tb_status[req.params["index_id"]] = {req.params["label"]: req.params["value"]}
+	}
     res.sendStatus(200);
 });
 
