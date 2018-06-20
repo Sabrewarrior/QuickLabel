@@ -13,23 +13,24 @@ block content
             a(href=next) >
     br
     div
-        form(action="/" +cur_id+"/save" method='get')
-            input(type="radio" name="tb_status" value="Active TB" checked=(tb_status==="Active TB" ? "checked" : undefined))
-            | Active TB
-            input(type="radio" name="tb_status" value="LTBI" checked=(tb_status==="LTBI" ? "checked" : undefined))
-            | LTBI
-            input(type="radio" name="tb_status" value="None" checked=(tb_status==="None" ? "checked" : undefined))
-            | None
-            input(type="radio" name="tb_status" value="Wrong Study" checked=(tb_status==="Wrong Study" ? "checked" : undefined))
-            | Wrong Study
+        - console.log(labels)
+        each value in label_map
+            form(action="/" +cur_id+"/save" method='get')
+                    div(style={display: "inline-block", width: '70px'}) #{value["Variable"]}
+                    div(style={display: "inline-block"})
+                        each option in value["Options"]
+                            input(class="input_form" type=value["Type"] name=value["Variable"] value=(option === " " ? labels[value["Variable"]][0] : option) checked=(labels[value["Variable"]].indexOf(option) > -1 ? "checked" : undefined))
+                            | #{option}
+            br
     br
     br
     h2= "Neighbourhood"
-    each element in neighbourhood_data
-        each line in element.split(/\\n/)
-            = line
+    p
+        each element in neighbourhood_data
+            each line in element.split(/\\n/)
+                != line
+                br
             br
-        br
     h2= "Charts"
     each element in text_data
         each line in element.split(/\\n/)
