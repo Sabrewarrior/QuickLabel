@@ -4,7 +4,8 @@ const parse = require('csv-parse/lib/sync');
 const fs = require('fs');
 const Lazy = require('lazy');
 const jsonexport = require('jsonexport');
-
+let savenum = 1;
+let save_status = "Save";
 let router = express.Router();
 let unique_ids = new Set([]);
 let id_dict = {};
@@ -48,7 +49,6 @@ function parse_neighbourfile(line){
 }
 
 function get_labels(line){
-    console.log("Line: " + line);
     let items = parse(line)[0];
     if (items[0] === "Label") {
         items.slice(1).forEach(function (item, index) {
@@ -88,7 +88,9 @@ function get_labels(line){
 function get_charts(line){
     let item = parse(line)[0];
     if (id_dict[item[0]] !== undefined) {
-        id_dict[item[0]]["text"].push(item[2])
+        if (item[2].slice(0,50).search(/((RES)|(Respirology))/) > -1){
+            id_dict[item[0]]["text"].push(item[2]);
+        }
     }
 }
 
@@ -101,7 +103,7 @@ new Lazy(fs.createReadStream("Z:\\LKS-CHART\\Projects\\NLP POC\\Study data\\TB\\
                 .forEach(parse_neighbourfile).on("pipe", function(){
 
                     set_array = Array.from(unique_ids);
-                    console.log(labels);
+                    // console.log(labels);
                     console.log("Started reading data");
                     new Lazy(fs.createReadStream("Z:\\LKS-CHART\\Projects\\NLP POC\\Study data\\TB\\dev\\Data_unlabeled(Clean).csv", "utf-8"))
                         .lines
@@ -116,33 +118,53 @@ new Lazy(fs.createReadStream("Z:\\LKS-CHART\\Projects\\NLP POC\\Study data\\TB\\
                 });
         });
 
-console.log("Finished neighbourhood");
+//console.log("Finished neighbourhood");
 
 console.log("READY");
 /* GET home page. */
 router.get('/', function(req, res, next) {
-  res.render('record', { title: "QuickLabel",
-      neighbourhood_data: id_dict[set_array[0]]["neighbourhood"],
-      text_data: id_dict[set_array[0]]["text"],
-      index_id: 0, max_index: set_array.length,
-      cur_id: set_array[0],
-      labels: labels[set_array[0]],
-      label_map: label_map
-  });
+  res.redirect('/0');
 });
 
 router.post('/save/:index_id/:label', function(req, res, next) {
-    console.log([req.params["index_id"]] + " " + [req.params["label"]]);
+    save_status = "Save";
 	labels[req.params["index_id"]][req.params["label"]] = req.body["values"];
-	console.log(labels[req.params["index_id"]][req.params["label"]]);
+    //console.log([req.params["index_id"]] + " " + [req.params["label"]]);
+    //console.log(labels[req.params["index_id"]][req.params["label"]]);
     res.sendStatus(200);
 });
 
 router.get('/save', function(req, res, next){
+    save_status = "Saving";
     console.log("Got save request");
-    jsonexport(labels,function(err, csv){
-        if(err) return console.log(err);
-        console.log(csv);
+    let labels_array = [];
+    for (const [key, value] of Object.entries(labels)){
+        let single_id = {"id": key};
+        for (const [title, label] of Object.entries(value)){
+            single_id[title] = label
+        }
+        labels_array.push(single_id)
+    }
+    jsonexport(labels_array,function(err, csv){
+        if(err) {
+            console.log(err);
+            save_status = "Failed";
+            res.sendStatus(500);
+        } else {
+            fs.writeFile("Z:\\LKS-CHART\\Projects\\NLP POC\\Study data\\TB\\dev\\Unlabeled\\Labels\\label_V" + savenum + ".csv", csv, function(err) {
+                if(err) {
+                    console.log(err);
+                    save_status = "Failed";
+                    res.status(500);
+                    res.send(err);
+                } else {
+                    savenum = savenum + 1;
+                    // console.log(csv);
+                    save_status = "Saved";
+                    res.sendStatus(200);
+                }
+            });
+        }
     });
 });
 
@@ -153,7 +175,8 @@ router.get('/:index_id', function(req, res, next) {
         index_id: Number(req.params["index_id"]), max_index: set_array.length,
         cur_id: set_array[Number(req.params["index_id"])],
         labels: labels[set_array[Number(req.params["index_id"])]],
-        label_map: label_map
+        label_map: label_map,
+        save_status: save_status
     });
 });
 

@@ -1,39 +1,17 @@
-extends layout
+extends labels
 
-block content
+block records
     div
-        if index_id > 0
-            - var prev = index_id - 1
-            a(href=prev) <
-        |
-        p(id="cur_id") #{cur_id}
-        |
-        if index_id < max_index - 1
-            - var next = index_id + 1
-            a(href=next) >
-    br
-    div
-        - console.log(labels)
-        each value in label_map
-            form(action="/" +cur_id+"/save" method='get')
-                    div(style={display: "inline-block", width: '70px'}) #{value["Variable"]}
-                    div(style={display: "inline-block"})
-                        each option in value["Options"]
-                            input(class="input_form" type=value["Type"] name=value["Variable"] value=(option === " " ? labels[value["Variable"]][0] : option) checked=(labels[value["Variable"]].indexOf(option) > -1 ? "checked" : undefined))
-                            | #{option}
-            br
-    br
-    br
-    h2= "Neighbourhood"
-    p
-        each element in neighbourhood_data
+        h2= "Neighbourhood"
+        p
+            each element in neighbourhood_data
+                each line in element.split(/\\n/)
+                    != line
+                    br
+                br
+        h2= "Charts"
+        each element in text_data
             each line in element.split(/\\n/)
-                != line
-                br
+                    = line
+                    br
             br
-    h2= "Charts"
-    each element in text_data
-        each line in element.split(/\\n/)
-                = line
-                br
-        br
