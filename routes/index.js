@@ -151,7 +151,7 @@ router.get('/save', function(req, res, next){
             save_status = "Failed";
             res.sendStatus(500);
         } else {
-            fs.writeFile("Z:\\LKS-CHART\\Projects\\NLP POC\\Study data\\TB\\dev\\Unlabeled\\Labels\\label_V" + savenum + ".csv", csv, function(err) {
+            fs.writeFile("Z:\\LKS-CHART\\Projects\\NLP POC\\Study data\\TB\\dev\\Unlabeled\\Labels\\label_Vtest" + savenum + ".csv", csv, function(err) {
                 if(err) {
                     console.log(err);
                     save_status = "Failed";

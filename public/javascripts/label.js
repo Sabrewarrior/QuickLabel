@@ -1,4 +1,9 @@
 $(document).ready(function () {
+    var height = $("#one").height();
+    if(height > 0) {
+        $("#two").css("margin-top",height);
+    }
+
     $('#save').click(function(){
         $('#save')[0].textContent = 'Saving';
         $.ajax("/save", {
