@@ -2,13 +2,15 @@ extends labels
 
 block records
     div
-        h2= "Neighbourhood"
-        p
-            each element in neighbourhood_data
-                each line in element.split(/\\n/)
-                    != line
-                    br
-                br
+        if neighbourhood_data !== undefined
+            if neighbourhood_data.length > 0
+                h2= "Neighbourhood"
+                p
+                    each element in neighbourhood_data
+                        each line in element.split(/\\n/)
+                            != line
+                            br
+                        br
         h2= "Charts"
         each element in text_data
             each line in element.split(/\\n/)

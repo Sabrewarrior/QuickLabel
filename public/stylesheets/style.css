@@ -10,3 +10,9 @@ a {
 #halfdiv{
   width: 50%;
 }
+
+.drop-override {
+  top: 30 !important;
+  left: inherit !important;
+  right: -3 !important;
+}

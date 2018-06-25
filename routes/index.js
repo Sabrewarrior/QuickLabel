@@ -11,6 +11,11 @@ let unique_ids = new Set([]);
 let id_dict = {};
 let labels = {};
 let label_map = [];
+let neighbourhood_file = undefined;
+// let neighbourhood_file = "Z:\\LKS-CHART\\Projects\\NLP POC\\Study data\\TB\\dev\\Unlabeled\\active_tb.csv";
+let charts_file = "Z:\\LKS-CHART\\Projects\\NLP POC\\Study data\\TB\\dev\\Unlabeled\\Jane_list_unlabeled(Clean).csv";
+let label_map_file = "Z:\\LKS-CHART\\Projects\\NLP POC\\Study data\\TB\\dev\\Unlabeled\\test_map.csv";
+//let label_map_file = "Z:\\LKS-CHART\\Projects\\NLP POC\\Study data\\TB\\dev\\Unlabeled\\labels_map.csv";
 let available_inputs = {
     "checkbox":	{"description": "Defines a checkbox"},
     "color": {"description": "Defines a color picker"},
@@ -31,15 +36,7 @@ let set_array = [];
 console.time("dbsave");
 function parse_neighbourfile(line){
     let items = parse(line)[0];
-    unique_ids.add(items[0]);
     if (id_dict[items[0]] === undefined) {
-        label_map.forEach(function (label){
-            if (labels[items[0]] !== undefined) {
-                labels[items[0]][label["Variable"]] = label["Default"]
-            } else {
-                labels[items[0]] = {[label["Variable"]]: label["Default"]}
-            }
-        });
         id_dict[items[0]] = {"neighbourhood": [items[1]],
             "text": []
         }
@@ -86,35 +83,46 @@ function get_labels(line){
 }
 
 function get_charts(line){
-    let item = parse(line)[0];
-    if (id_dict[item[0]] !== undefined) {
-        if (item[2].slice(0,50).search(/((RES)|(Respirology))/) > -1){
-            id_dict[item[0]]["text"].push(item[2]);
+    let items = parse(line)[0];
+    if (id_dict[items[0]] === undefined) {
+        unique_ids.add(items[0]);
+        label_map.forEach(function (label){
+            if (labels[items[0]] !== undefined) {
+                labels[items[0]][label["Variable"]] = label["Default"]
+            } else {
+                labels[items[0]] = {[label["Variable"]]: label["Default"]}
+            }
+        });
+        id_dict[items[0]] = {"neighbourhood": [],
+            "text": [items[2]]};
+    } else {
+        if (items[2].slice(0,50).search(/((RES)|(Respirology))/) > -1){
+            id_dict[items[0]]["text"].push(items[2]);
         }
     }
 }
 
-new Lazy(fs.createReadStream("Z:\\LKS-CHART\\Projects\\NLP POC\\Study data\\TB\\dev\\Unlabeled\\labels_map.csv", "utf-8"))
+new Lazy(fs.createReadStream(label_map_file, "utf-8"))
     .lines
     .forEach(get_labels).on("pipe", function(){
-            new Lazy(fs.createReadStream("Z:\\LKS-CHART\\Projects\\NLP POC\\Study data\\TB\\dev\\Unlabeled\\active_tb.csv", "utf-8"))
+            new Lazy(fs.createReadStream(charts_file, "utf-8"))
                 .lines
                 .skip(1)
-                .forEach(parse_neighbourfile).on("pipe", function(){
+                .forEach(get_charts).on("pipe", function(){
 
                     set_array = Array.from(unique_ids);
                     // console.log(labels);
                     console.log("Started reading data");
-                    new Lazy(fs.createReadStream("Z:\\LKS-CHART\\Projects\\NLP POC\\Study data\\TB\\dev\\Data_unlabeled(Clean).csv", "utf-8"))
-                        .lines
-                        .skip(1)
-                        .forEach(get_charts)
-                        .on('pipe', function() {
-                            console.log("Finished reading data");
-                            console.timeEnd("dbsave");
-
-                            delete(unique_ids);
-                        })
+                    if (neighbourhood_file !== undefined) {
+                        new Lazy(fs.createReadStream(neighbourhood_file, "utf-8"))
+                            .lines
+                            .skip(1)
+                            .forEach(parse_neighbourfile)
+                            .on('pipe', function () {
+                                console.log("Finished reading data");
+                                console.timeEnd("dbsave");
+                            })
+                    }
                 });
         });
 
@@ -169,6 +177,8 @@ router.get('/save', function(req, res, next){
 });
 
 router.get('/:index_id', function(req, res, next) {
+    //console.log(labels[set_array[Number(req.params["index_id"])]]);
+    //console.log(label_map);
     res.render('record', { title: "QuickLabel",
         neighbourhood_data: id_dict[set_array[Number(req.params["index_id"])]]["neighbourhood"],
         text_data: id_dict[set_array[Number(req.params["index_id"])]]["text"],

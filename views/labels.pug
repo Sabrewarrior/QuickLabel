@@ -1,10 +1,43 @@
 extends layout
 
 block content
-    div(id="one" style={"width": "100%", "position": "fixed", "padding":"25px 25px 0px 25px", "top":"0", "left":"0", "background-color":"rgba(255, 255, 255, 1)"})
+    div(id="sideone" class="container" style={"width": "25%", "position":"fixed", "left": "0", "height":"100%",
+        "overflow-y": "scroll"})
+        div(class="row")
+            each value in label_map
+                div(class="col-lg-12")
+                    if value["Type"] === "text" || value["Type"] === "date"
+                        - var input_class = "input_form form-control"
+                        input(type=value["Type"] class=input_class name=value["Variable"] autocomplete="off"
+                            value=input_value placeholder=value["Variable"])
+                    else
+                        - var input_class = "input_form"
+                        div(class="button-group")
+                            button(type="button" class="btn btn-default btn-sm dropdown-toggle" data-toggle="dropdown")
+                                span #{value["Variable"]} &nbsp;
+                                span(class="caret")
+                            ul(class="dropdown-menu drop-override")
+                                - console.log(value["Variable"])
+                                - console.log(value["Options"])
+                                each option in value["Options"]
+                                    if option === undefined || option === "" || option === " "
+                                        - var input_value = labels[value["Variable"]][0]
+                                    else
+                                        - var input_value = option
+                                    li
+                                        a(href="#" class="small" data-value=input_value tabIndex="-1")
+                                            input(type=value["Type"] class=input_class name=value["Variable"] style={"z-index":"-1"}, autocomplete="off" value=input_value)
+                                            | &nbsp;#{option}
+                div(class="col-lg-12")
+                    br
+            div(class="col-lg-12")
+                br
+
+    div(id="one" style={position: "fixed", width:"75%", "padding": "25px 25px 0px 25px", "top": "0",
+        "left": "25%", "background-color": "rgba(255, 255, 255, 1)"})
         div(style={float: "right"})
             button(id="save" type="button" class="btn btn-primary btn-sm" style={"width": "70px"}) #{save_status}
-        div(style={"text-align": "center", "font-size":"20px", "right": 0})
+        div(style={"text-align": "center", "font-size": "20px", "right": 0})
             span(style={'margin-right': '10px'})
                 if index_id > 0
                     - var prev = index_id - 1
@@ -15,20 +48,6 @@ block content
                     - var next = index_id + 1
                     a(href=next) >
         br
-        div
-            each value in label_map
-                form(action="/" + cur_id + "/save" method='get')
-                    div(style={display: "inline-block", width: '130px'}) #{value["Variable"]}
-                    div(style={display: "inline-block"})
-                        each option in value["Options"]
-                            if option === " "
-                                - var input_class = "input_form form-control"
-                                - var input_value = labels[value["Variable"]][0]
-                            else
-                                - var input_class = "input_form"
-                                - var input_value = option
-                            input(style={"margin-left": '10px'} class=input_class type=value["Type"] name=value["Variable"] autocomplete="off" value=input_value checked=(labels[value["Variable"]].indexOf(option) > -1 ? "checked" : undefined))
-                            |  #{option}
-                br
-    div(id="two" style={"position": "relative", "z-index": "-1"})
+
+    div(id="two" style={"position": "relative", "z-index": "-2", left:"25%", width:"75%"})
         block records
