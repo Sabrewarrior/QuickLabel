@@ -16,3 +16,7 @@ a {
   left: inherit !important;
   right: -3 !important;
 }
+
+.highlight {
+  background-color:yellow;
+}
