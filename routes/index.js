@@ -3,7 +3,8 @@ const express = require('express');
 const parse = require('csv-parse/lib/sync');
 const fs = require('fs');
 const Lazy = require('lazy');
-const jsonexport = require('jsonexport');
+const JsonExport = require('jsonexport');
+const path = require('path');
 let savenum = 1;
 let save_status = "Save";
 let router = express.Router();
@@ -15,6 +16,7 @@ let neighbourhood_file = undefined;
 // let neighbourhood_file = "Z:\\LKS-CHART\\Projects\\NLP POC\\Study data\\TB\\dev\\Unlabeled\\active_tb.csv";
 let charts_file = "Z:\\LKS-CHART\\Projects\\NLP POC\\Study data\\TB\\dev\\Unlabeled\\Jane_list_unlabeled(Clean).csv";
 let label_map_file = "Z:\\LKS-CHART\\Projects\\NLP POC\\Study data\\TB\\dev\\Unlabeled\\test_map.csv";
+let saveLocation = "Z:\\LKS-CHART\\Projects\\NLP POC\\Study data\\TB\\dev\\Unlabeled\\Labels\\Test";
 //let label_map_file = "Z:\\LKS-CHART\\Projects\\NLP POC\\Study data\\TB\\dev\\Unlabeled\\labels_map.csv";
 let available_inputs = {
     "checkbox":	{"description": "Defines a checkbox"},
@@ -134,9 +136,13 @@ router.get('/', function(req, res, next) {
   res.redirect('/0');
 });
 
-router.post('/save/:index_id/:label', function(req, res, next) {
+router.post('/save/:index_id', function(req, res, next) {
     save_status = "Save";
-	labels[req.params["index_id"]][req.params["label"]] = req.body["values"];
+    console.log("Saving:");
+    console.log(req.params["index_id"]);
+    console.log(req.body["variable"]);
+    console.log(req.body["values"]);
+	labels[req.params["index_id"]][req.body["variable"]] = req.body["values"];
     //console.log([req.params["index_id"]] + " " + [req.params["label"]]);
     //console.log(labels[req.params["index_id"]][req.params["label"]]);
     res.sendStatus(200);
@@ -147,19 +153,26 @@ router.get('/save', function(req, res, next){
     console.log("Got save request");
     let labels_array = [];
     for (const [key, value] of Object.entries(labels)){
+        if (value === undefined) {
+            console.log(key + "IS UNDEFINED");
+        }
         let single_id = {"id": key};
         for (const [title, label] of Object.entries(value)){
             single_id[title] = label
         }
         labels_array.push(single_id)
     }
-    jsonexport(labels_array,function(err, csv){
+    // console.log(labels_array);
+    JsonExport(labels_array,function(err, csv){
+        //console.log(labels_array);
         if(err) {
             console.log(err);
             save_status = "Failed";
             res.sendStatus(500);
         } else {
-            fs.writeFile("Z:\\LKS-CHART\\Projects\\NLP POC\\Study data\\TB\\dev\\Unlabeled\\Labels\\label_Vtest" + savenum + ".csv", csv, function(err) {
+
+            fs.writeFile(path.join(saveLocation, "label_Vtest" + savenum + ".csv"), csv, function(err) {
+
                 if(err) {
                     console.log(err);
                     save_status = "Failed";

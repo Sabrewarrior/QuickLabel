@@ -17,6 +17,19 @@ a {
   right: -3 !important;
 }
 
-.highlight {
-  background-color:yellow;
+.mark-highlight {
+  margin: 0 0 0 0;
+  padding: 0 0 0 0;
+  background: yellow;
+}
+
+.mark-highlight.current {
+  margin: 0 0 0 0;
+  padding: 0 0 0 0;
+  background: orange;
+}
+
+.input-group-addons{
+  margin-bottom: 0;
+  background-color: #ffffff !important;
 }
