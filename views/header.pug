@@ -1,0 +1,18 @@
+extends searchbar
+
+block header
+    div(id="one" style={position: "fixed", width:"60%", "padding": "25px 25px 0px 25px", "top": "0",
+        "left": "40%", "background-color": "rgba(255, 255, 255, 1)"})
+        div(style={display: "inline-block", "text-align": "center", margin: "0 0 0 0",  width:"20%", "font-size": "20px", "right": 0})
+            span(style={'margin-right': '10px'})
+                if index_id > 0
+                    - var prev = index_id - 1
+                    a(href=prev) <
+            span(id="cur_id") #{cur_id}
+            span(style={'margin-left': '10px'})
+                if index_id < max_index - 1
+                    - var next = index_id + 1
+                    a(href=next) >
+        div(style={display: "inline-block", width:"80%", margin: "0 0 0 0", "text-align": "right", "right":0, "padding": "25px 25px 0px 25px", "top": "0"})
+            button(id="save" type="button" class="btn btn-primary btn-sm" style={"width": "70px"}) #{save_status}
+        br

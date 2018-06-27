@@ -1,7 +1,7 @@
-extends labels
+extends variables
 
 block records
-    div
+    div(id="two" class="searchable" style={"position": "relative", "z-index": "-2", left: "40%", width: "60%"})
         if neighbourhood_data !== undefined
             if neighbourhood_data.length > 0
                 h2= "Neighbourhood"

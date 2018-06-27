@@ -1,0 +1,24 @@
+extends content
+
+block searchbar
+    div(id="searchbar" style={
+        position: "fixed",
+        width: "30%",
+        margin: "10px 10px 0 0",
+        "text-align": "right",
+        right: "0",
+        padding: "0px 0px 0px 0px",
+        top: "0",
+        display: "none"
+    })
+        div(class="input-group mb-2 mr-sm-2 panel panel-default")
+            input(type="text" id="searchText" class="form-control" placeholder="Search" style={"border": "0"})
+            span(class="input-group-btn")
+                button(class="btn btn-default" type="button" data-search="prev" style={"border": "0"})
+                    span(class="glyphicon glyphicon-chevron-up")
+            span(class="input-group-btn" )
+                button(type="button" data-search="next" class="btn btn-default" style={"border": "0"})
+                    span(class="glyphicon glyphicon-chevron-down")
+            span(class="input-group-btn" )
+                button(type="button" data-search="clear" class="btn btn-default" style={"border": "0"})
+                    span(class="glyphicon glyphicon-remove")
