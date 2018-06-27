@@ -19,6 +19,10 @@ let charts_file = "Z:\\LKS-CHART\\Projects\\NLP POC\\Study data\\TB\\dev\\Unlabe
 let label_map_file = "Z:\\LKS-CHART\\Projects\\NLP POC\\Study data\\TB\\dev\\Unlabeled\\test_map.csv";
 let saveLocation = "Z:\\LKS-CHART\\Projects\\NLP POC\\Study data\\TB\\dev\\Unlabeled\\Labels\\Finished";
 
+var test_csv = "Label,\"a, b, c\"\n";
+console.log(Papa.parse(test_csv, {"delimiter":',',"escapeChar": '"', "skipEmptyLines": true}));
+
+
 let available_inputs = {
     "checkbox":	{"description": "Defines a checkbox"},
     "color": {"description": "Defines a color picker"},
@@ -69,6 +73,8 @@ function get_labels(items){
         items.slice(1).forEach(function (item, index) {
             if (item !== "") {
                 label_map[index]["Default"] = [item]
+            } else {
+                label_map[index]["Default"] = []
             }
         })
     } else {
@@ -110,25 +116,42 @@ function get_charts(items){
         }
     }
 }
+
 console.log("Starting...");
 Papa.parse(fs.createReadStream(label_map_file, "utf-8"),
     {
+        skipEmptyLines: true,
         step: function(results, parser){
             results.data.forEach(get_labels);
         },
-        complete: function () {
+        complete: function (results) {
+            if (results.errors.length > 0) {
+                console.log("Parsing errors:");
+                console.log(results.errors);
+            }
             Papa.parse(fs.createReadStream(charts_file, "utf-8"), {
+                skipEmptyLines: true,
                 step: function(results, parser){
                     results.data.forEach(get_charts);
                 },
-                complete: function() {
+                complete: function(results) {
+                    if (results.errors.length > 0) {
+                        console.log("Parsing errors:");
+                        console.log(results.errors);
+                    }
+
                     set_array = Array.from(unique_ids);
                     if (neighbourhood_file !== undefined) {
                         Papa.parse(fs.createReadStream(neighbourhood_file, "utf-8"), {
+                            skipEmptyLines: true,
                             step: function(results, parser){
                                 results.data.forEach(parse_neighbourfile);
                             },
-                            complete: function(){
+                            complete: function(results){
+                                if (results.errors.length > 0) {
+                                    console.log("Parsing errors:");
+                                    console.log(results.errors);
+                                }
                                 console.log("Ready");
                                 console.timeEnd("dbsave");
                             }

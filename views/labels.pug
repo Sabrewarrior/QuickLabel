@@ -8,6 +8,10 @@ block content
                 each value in label_map
                     div(class="col-lg-12")
                         if value["Type"] === "text" || value["Type"] === "date"
+                            if labels[value["Variable"]] === undefined || labels[value["Variable"]].length === 0
+                                - var input_value = ""
+                            else
+                                - var input_value =  labels[value["Variable"]][0]
                             - var input_class = "input_form form-control"
                             input(type=value["Type"] class=input_class name=value["Variable"] autocomplete="off"
                                 value=input_value placeholder=value["Variable"])
@@ -18,8 +22,6 @@ block content
                                     span #{value["Variable"]} &nbsp;
                                     span(class="caret")
                                 ul(class="dropdown-menu drop-override")
-                                    - console.log(value["Variable"])
-                                    - console.log(value["Options"])
                                     each option in value["Options"]
                                         if option === undefined || option === "" || option === " "
                                             - var input_value = labels[value["Variable"]][0]
@@ -27,7 +29,7 @@ block content
                                             - var input_value = option
                                         li
                                             a(href="#" class="small" data-value=input_value tabIndex="-1")
-                                                input(type=value["Type"] class=input_class name=value["Variable"] autocomplete="off" value=input_value)
+                                                input(type=value["Type"] class=input_class name=value["Variable"] autocomplete="off" value=input_value checked=(labels[value["Variable"]].indexOf(option) > -1 ? "checked" : undefined))
                                                 | &nbsp;#{option}
                     div(class="col-lg-12")
                         br
