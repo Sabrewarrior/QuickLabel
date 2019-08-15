@@ -1,3 +1,18 @@
+Installation: 
+    
+    Install node.js and npm
+    Download or clone repository
+    npm install
+    
+Run:
+
+    For standalone application (electron based):
+        npm run start-electron
+    For browser:
+        Create settings.json file based on settings_example.json
+        npm run start
+        Open browser to localhost:3000
+
 Data file: 
 
     First column (id): Only rows with number format will be added. Repeat ids if there is additional data for same id.
