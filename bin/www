@@ -108,10 +108,13 @@ function onElectronReady() {
     backgroundColor: "##D0D0D0",
     // Don't show the window until it's ready, this prevents any white flickering
     show: false,
-    title: 'Quick Label'
+    title: 'Quick Label',
+    webPreferences: {
+      nodeIntegration: true
+    }
   });
 
-  window.loadURL("http://localhost:" + port);
+  window.loadURL("http://localhost:" + port + "/settings");
 
   // Show window when page is ready
   window.once('ready-to-show', () => {

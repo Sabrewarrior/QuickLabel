@@ -1,0 +1,8 @@
+Label,Active TB,LTBI,NTM,Method - LTBI,Method - Active TB,Comments
+Type,radio,radio,radio,checkbox,radio,text
+Default,No,Not Evaluated,No/Not Evaluated,None,None,Type comment here
+Options,Yes,Yes,Yes,Positive TB Skin Test,Culture Positive,
+,No,No,No/Not Evaluated,Clinical History,PCR positive,
+,,Not Evaluated,,IGRA Positive,Clinical Pathology,
+,,Unable to Rule Out,,None,Clinical Diagnosis,
+,,,,,None,

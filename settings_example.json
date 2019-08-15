@@ -1,0 +1,5 @@
+{
+  "charts_file": "./example/data.csv",
+  "label_map_file": "./example/map.csv",
+  "save_location": "./example"
+}
