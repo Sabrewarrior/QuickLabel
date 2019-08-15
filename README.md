@@ -1,6 +1,11 @@
+Data file: 
 
-Possible input types in map file
+    First column (id): Only rows with number format will be added. Repeat ids if there is additional data for same id.
+    Second column (data): Data is assumed to be in text format.
+    
+Map file:
 
+    The following input types are allowed
     "checkbox":	Checkbox list
     "color": Color picker
     "date":	Date control (year, month, day (no time))
