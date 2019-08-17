@@ -3,21 +3,24 @@ extends layout
 block content
     body
         span= "Data file:"
-        input(type="text" id="dataFile" class="form-control" placeholder="Data file" style={"border": "0"} value=charts_file)
-        button(id="openDataSelector" type="button" class="btn-sm")
-            span(class="glyphicon glyphicon-folder-open")
+        div(style={display: "inline-block", width:"100%", margin: "0 0 0 0", "padding": "0 0 0 0", "top": "0"})
+            button(id="openDataSelector" type="button" class="btn btn-sm" style={display: "inline-block", "width": "40px"})
+                span(class="glyphicon glyphicon-folder-open")
+            input(type="text" id="dataFile" class="form-control" placeholder="Data file" style={display: "inline-block", "border": "0", "max-width":"90%"} value=charts_file)
         br
         br
         span= "Map file:"
-        input(type="text" id="mapFile" class="form-control" placeholder="Variable Mapping file" style={"border": "0"} value=label_map_file)
-        button(id="openMapSelector" type="button" class="btn-sm")
-            span(class="glyphicon glyphicon-folder-open")
+        div(style={display: "inline-block", width: "100%", margin: "0 0 0 0", "padding": "0 0 0 0", "top": "0"})
+            button(id="openMapSelector" type="button" class="btn btn-sm" style={"display": "inline-block", "width": "40px"})
+                span(class="glyphicon glyphicon-folder-open")
+            input(type="text" id="mapFile" class="form-control" placeholder="Variable Mapping file" style={display: "inline-block", "border": "0", "max-width":"90%"} value=label_map_file)
         br
         br
         span= "Save location:"
-        input(type="text" id="saveFolder" class="form-control" placeholder="Save Location" style={"border": "0"} value=save_location)
-        button(id="openSaveSelector" type="button" class="btn-sm")
-            span(class="glyphicon glyphicon-folder-open")
+        div(style={display: "inline-block", width: "100%", margin: "0 0 0 0", "padding": "0 0 0 0", "top": "0"})
+            button(id="openSaveSelector" type="button" class="btn btn-sm" style={"display": "inline-block", "width": "40px"})
+                span(class="glyphicon glyphicon-folder-open")
+            input(type="text" id="saveFolder" class="form-control" placeholder="Save Location" style={display: "inline-block", "border": "0", "max-width":"90%"} value=save_location)
         br
         br
         button(id="load" type="button" class="btn btn-primary btn-sm" style={"width": "70px"}) #{load_status}
