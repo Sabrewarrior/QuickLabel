@@ -340,7 +340,7 @@ router.get('/save', function(req, res, next){
 router.get('/:index_id', function(req, res, next) {
     console.log(id_dict);
     res.render('record', { title: "Quick Label",
-        neighbourhood_data: id_dict[set_array[Number(req.params["index_id"])]]["neighbourhood"],
+        //neighbourhood_data: id_dict[set_array[Number(req.params["index_id"])]]["neighbourhood"],
         text_data: id_dict[set_array[Number(req.params["index_id"])]]["text"],
         index_id: Number(req.params["index_id"]), max_index: set_array.length,
         cur_id: set_array[Number(req.params["index_id"])],

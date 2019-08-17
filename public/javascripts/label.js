@@ -153,6 +153,13 @@ $(document).ready(function () {
         })
     });
 
+    if (typeof window !== 'undefined' && typeof window.process === 'object' && window.process.type === 'renderer') {
+        document.getElementById("settings").style.display = "inline-block";
+        $( '#settings' ).click(function(){
+            window.location.href = "/settings";
+        });
+    }
+
     window.addEventListener('keydown', function(event){
         if (event.defaultPrevented) {
             return; // Should do nothing if the default action has been cancelled

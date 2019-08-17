@@ -31,13 +31,13 @@ if (typeof window !== 'undefined' && typeof window.process === 'object' && windo
         $( '#load' ).prop("textContent", "Loading");
         $.ajax("/load", {
             type: 'POST',
-            data: JSON.stringify({"charts_file": "/Users/Ujash/WebstormProjects/QuickLabel/example/data.csv" ,
+            /*data: JSON.stringify({"charts_file": "/Users/Ujash/WebstormProjects/QuickLabel/example/data.csv" ,
                 "label_map_file": "/Users/Ujash/WebstormProjects/QuickLabel/example/map.csv" ,
-                "save_location": "/Users/Ujash/WebstormProjects/QuickLabel/example"}),
-            /*data: JSON.stringify({"charts_file": document.getElementById("dataFile").value ,
+                "save_location": "/Users/Ujash/WebstormProjects/QuickLabel/example"}),*/
+            data: JSON.stringify({"charts_file": document.getElementById("dataFile").value ,
                                         "label_map_file": document.getElementById("mapFile").value ,
                 "save_location": document.getElementById("saveFolder").value
-            }),*/
+            }),
             contentType: 'application/json',
             success: function(data) {
                 window.location.href = "/";
